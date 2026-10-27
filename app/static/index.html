@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroLearn - AI Document Learning & Assessment Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <!-- App Header / Branding -->
+      <div class="brand">
+        <div class="brand-left">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h2>NeuroLearn</h2>
+            <span class="tagline" title="RAG Q&A Assistant">RAG Q&A Assistant</span>
+          </div>
+        </div>
+        <div class="brand-actions">
+          <button id="themeToggleBtn" class="icon-btn" title="Toggle Light / Dark Mode">
+            <svg id="themeIconSun" class="theme-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg id="themeIconMoon" class="theme-icon" style="display:none" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </button>
+          <button id="openSettingsBtn" class="icon-btn" title="Configure API Keys & Models">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Engine Status Pill -->
+      <div class="provider-badge" id="providerBadge">
+        <span class="status-pulse"></span>
+        <div class="provider-info">
+          <span class="provider-label">AI Engine: <strong id="currentProviderName">Gemini (Free)</strong></span>
+          <span class="provider-sub">Dense 384-d BERT Vectors &bull; RAG</span>
+        </div>
+      </div>
+
+      <!-- Ingest Section -->
+      <div class="sidebar-section">
+        <div class="section-title-row">
+          <span class="section-label">ADD SOURCE</span>
+        </div>
+
+        <div class="ingest-tabs">
+          <button class="subtab-btn active" data-subtab="pdf">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            PDF File
+          </button>
+          <button class="subtab-btn" data-subtab="url">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Web URL
+          </button>
+          <button class="subtab-btn" data-subtab="raw">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Text
+          </button>
+        </div>
+
+        <!-- PDF Upload Form -->
+        <div class="subtab-content active" id="subtab-pdf">
+          <div class="upload-dropzone" id="dropzone">
+            <input type="file" id="pdfFileInput" accept=".pdf" style="display:none">
+            <div class="dropzone-icon-wrap">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <p class="dropzone-title"><strong>Click to upload</strong> or drag & drop</p>
+            <span class="file-hint">PDF documents up to 50MB</span>
+          </div>
+        </div>
+
+        <!-- Web URL Form -->
+        <div class="subtab-content" id="subtab-url">
+          <div class="url-input-group">
+            <input type="url" id="urlInput" placeholder="https://example.com/article" class="text-input">
+            <button id="scrapeUrlBtn" class="primary-btn sm">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Scrape & Index
+            </button>
+          </div>
+        </div>
+
+        <!-- Raw Text Form -->
+        <div class="subtab-content" id="subtab-raw">
+          <div class="raw-input-group">
+            <input type="text" id="rawTitleInput" placeholder="Title (e.g. Chapter 3 Notes)" class="text-input">
+            <textarea id="rawTextInput" placeholder="Paste study notes, lecture transcripts, or article text here..." rows="3" class="text-area"></textarea>
+            <button id="indexTextBtn" class="primary-btn sm">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Index Text
+            </button>
+          </div>
+        </div>
+
+        <!-- Advanced Model & Tuning Accordion -->
+        <details class="tuning-accordion">
+          <summary class="tuning-summary">
+            <span class="tuning-summary-left">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+              Algorithm & Vector Settings
+            </span>
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="tuning-body">
+            <div class="form-group">
+              <label>Vector Embedding Model:</label>
+              <select id="sidebarEmbProvider" class="select-box full">
+                <option value="bert" selected>BERT / SBERT (all-MiniLM-L6-v2, 384-d, Local)</option>
+                <option value="gemini">Gemini gemini-embedding-001 (3072-d, Cloud Free)</option>
+                <option value="openai">OpenAI text-embedding-3-small (1536-d)</option>
+                <option value="local">Local Offline Vector Fallback (384-d)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Concept Extraction Method:</label>
+              <select id="sidebarSalienceMethod" class="select-box full">
+                <option value="tfidf">TF-IDF (Statistical Term Frequency)</option>
+                <option value="textrank">TextRank (Graph-Based PageRank)</option>
+                <option value="embedding">Dense Embedding (KeyBERT Semantic)</option>
+              </select>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Active Documents Section -->
+      <div class="sidebar-section doc-section">
+        <div class="section-title-row">
+          <span class="section-label">INDEXED DOCUMENTS</span>
+          <span class="doc-badge" id="docCount">0</span>
+        </div>
+        <div class="document-search-wrap">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="documentSearchInput" type="search" placeholder="Filter documents…" aria-label="Filter indexed documents">
+        </div>
+        <div class="document-list" id="documentList">
+          <div class="empty-docs">
+            <div class="empty-docs-icon">📄</div>
+            <p>No documents indexed yet.</p>
+            <span>Upload a PDF or paste text above to begin studying!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Quick Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-card">
+          <span class="footer-title">NeuroLearn Studio v2.0</span>
+          <span class="footer-desc">Powered by RAG & Bloom's Taxonomy</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      <!-- Workspace Top Bar -->
+      <header class="workspace-header">
+        <button id="sidebarToggleBtn" class="mobile-menu-btn" aria-label="Open document sidebar" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+        </button>
+        <div class="active-doc-banner">
+          <div class="doc-status-indicator">
+            <span class="pulse-ring"></span>
+          </div>
+          <div class="active-doc-text">
+            <span class="active-label">Active Context:</span>
+            <span id="activeDocTitleDisplay" class="active-title">No document selected</span>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="top-nav">
+          <button class="nav-tab active" data-tab="chat">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Chat</span>
+          </button>
+          <button class="nav-tab" data-tab="qa">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>Q&A</span>
+          </button>
+          <button class="nav-tab" data-tab="test-paper">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+            <span>Test Paper</span>
+          </button>
+          <button class="nav-tab" data-tab="mcq">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m9 11 3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            <span>Quiz & MCQs</span>
+          </button>
+          <button class="nav-tab" data-tab="flashcards">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="18" height="18" x="3" y="3" rx="2"/>
+              <path d="M7 7h10M7 12h10M7 17h6"/>
+            </svg>
+            <span>Flashcards</span>
+          </button>
+          <button class="nav-tab" data-tab="summary">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <span>Summary</span>
+          </button>
+        </nav>
+      </header>
+
+      <!-- TAB 1: RAG CHAT -->
+      <section class="tab-pane active" id="pane-chat">
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="welcome-hero">
+              <div class="hero-icon">✨</div>
+              <h2>How can I help you study today?</h2>
+              <p>Upload a document on the left, then ask questions, explore concepts, or choose a quick prompt below.</p>
+              <div class="prompt-chips">
+                <button class="prompt-chip" onclick="quickPrompt('Summarize the main core concepts in this document in 3 bullet points.')">
+                  📌 Summarize core concepts
+                </button>
+                <button class="prompt-chip" onclick="quickPrompt('What are the key terms, definitions, and equations mentioned?')">
+                  🔍 Key definitions & terms
+                </button>
+                <button class="prompt-chip" onclick="quickPrompt('Explain the most difficult or complex topic in simple language.')">
+                  💡 Explain the hardest concept
+                </button>
+                <button class="prompt-chip" onclick="quickPrompt('Generate 3 practice questions with answers to test my understanding.')">
+                  🎯 Test my understanding
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button id="scrollLatestBtn" class="scroll-latest-btn" type="button" aria-label="Scroll to latest message" title="Scroll to latest">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            Latest
+          </button>
+
+          <div class="chat-input-wrapper">
+            <div class="chat-input-bar">
+              <textarea id="chatInput" placeholder="Ask any question about your document... (Press Enter to send)" rows="1"></textarea>
+              <button id="sendChatBtn" class="send-btn" title="Send Question (Enter)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            </div>
+            <div class="chat-footer-hints">
+              <span>Answers are strictly grounded in your document with verified page citations</span>
+              <span class="kbd-hint">Press <kbd>↵ Enter</kbd> to send</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Q&A GENERATOR -->
+      <section class="tab-pane" id="pane-qa">
+        <div class="generator-toolbar">
+          <div class="toolbar-left">
+            <div class="toolbar-group">
+              <label>Count:</label>
+              <select id="qaCountSelect" class="select-box">
+                <option value="5">5 Questions</option>
+                <option value="10" selected>10 Questions</option>
+                <option value="20">20 Questions</option>
+                <option value="30">30 Questions</option>
+                <option value="50">50 Questions</option>
+              </select>
+            </div>
+            <div class="toolbar-group">
+              <label>Difficulty:</label>
+              <select id="qaDifficultySelect" class="select-box">
+                <option value="">Balanced Mix</option>
+                <option value="Easy">Easy (Recall)</option>
+                <option value="Medium">Medium (Conceptual)</option>
+                <option value="Hard">Hard (Evaluative)</option>
+              </select>
+            </div>
+            <div class="toolbar-group">
+              <label>Bloom's Level:</label>
+              <select id="qaBloomSelect" class="select-box">
+                <option value="">All 6 Levels</option>
+                <option value="Remember">Remember (Recall)</option>
+                <option value="Understand">Understand (Explain)</option>
+                <option value="Apply">Apply (Execute)</option>
+                <option value="Analyze">Analyze (Differentiate)</option>
+                <option value="Evaluate">Evaluate (Critique)</option>
+                <option value="Create">Create (Synthesize)</option>
+              </select>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <button id="generateQaBtn" class="primary-btn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+              Generate Q&A
+            </button>
+            <div class="export-dropdown">
+              <button id="exportQaJson" class="ghost-btn sm" title="Export as JSON">JSON</button>
+              <button id="exportQaCsv" class="ghost-btn sm" title="Export as CSV">CSV</button>
+              <button id="exportQaMd" class="ghost-btn sm" title="Export as Markdown">MD</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="qa-results-container" id="qaResults">
+          <div class="empty-state">
+            <div class="empty-icon-wrap">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <h3>No Q&A pairs generated yet</h3>
+            <p>Select your pedagogical parameters above and click <strong>Generate Q&A</strong> to synthesize Bloom's Taxonomy classified questions.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CUSTOM TEST PAPER -->
+      <section class="tab-pane" id="pane-test-paper">
+        <div class="generator-toolbar test-paper-toolbar">
+          <div class="toolbar-left test-paper-controls">
+            <input id="paperTitleInput" class="text-input" value="Custom Test Paper" aria-label="Test title" placeholder="Test title">
+            <input id="paperSubjectInput" class="text-input" aria-label="Subject" placeholder="Subject">
+            <input id="paperTopicInput" class="text-input" aria-label="Topic scope" placeholder="All topics">
+            <select id="paperTotalSelect" class="select-box" aria-label="Total questions"><option value="10" selected>10 questions</option><option value="20">20 questions</option><option value="30">30 questions</option><option value="50">50 questions</option><option value="custom">Custom total</option></select>
+            <select id="paperDifficultySelect" class="select-box" aria-label="Difficulty"><option>Mixed</option><option>Easy</option><option>Medium</option><option>Hard</option></select>
+            <input id="paperDurationInput" class="text-input compact-number" type="number" min="5" max="600" value="60" aria-label="Duration in minutes">
+          </div>
+          <div class="toolbar-right"><button id="generatePaperBtn" class="primary-btn">Generate Test Paper</button></div>
+        </div>
+        <div class="paper-type-grid">
+          <label><input type="number" min="0" max="50" value="5" data-paper-type="mcq"> MCQ</label>
+          <label><input type="number" min="0" max="50" value="0" data-paper-type="true_false"> True / False</label>
+          <label><input type="number" min="0" max="50" value="0" data-paper-type="fill_blank"> Fill blanks</label>
+          <label><input type="number" min="0" max="50" value="0" data-paper-type="very_short"> Very short</label>
+          <label><input type="number" min="0" max="50" value="5" data-paper-type="short"> Short answer</label>
+          <label><input type="number" min="0" max="50" value="0" data-paper-type="descriptive"> Descriptive</label>
+          <label><input type="number" min="0" max="50" value="0" data-paper-type="numerical"> Numerical</label>
+        </div>
+        <p class="paper-response-note">MCQs and True / False questions include selectable options. Fill-in, short, numerical, and descriptive questions are answered in writing and graded against the document.</p>
+        <details class="paper-advanced"><summary>Advanced settings · marks per type</summary><div class="paper-marks-grid">
+          <label>MCQ <input type="number" min="0.5" value="1" step="0.5" data-paper-mark-type="mcq"></label>
+          <label>True/False <input type="number" min="0.5" value="1" step="0.5" data-paper-mark-type="true_false"></label>
+          <label>Fill blanks <input type="number" min="0.5" value="1" step="0.5" data-paper-mark-type="fill_blank"></label>
+          <label>Very short <input type="number" min="0.5" value="1" step="0.5" data-paper-mark-type="very_short"></label>
+          <label>Short <input type="number" min="0.5" value="2" step="0.5" data-paper-mark-type="short"></label>
+          <label>Descriptive <input type="number" min="0.5" value="5" step="0.5" data-paper-mark-type="descriptive"></label>
+          <label>Numerical <input type="number" min="0.5" value="3" step="0.5" data-paper-mark-type="numerical"></label>
+        </div></details>
+        <div id="paperSummary" class="paper-summary">10 questions · Configure the mix above</div>
+        <div id="testPaperResults" class="test-paper-results"><div class="empty-state"><h3>No test paper generated</h3><p>Select question counts and generate a grounded paper from the active document.</p></div></div>
+      </section>
+
+      <!-- TAB 3: QUIZ & MCQS -->
+      <section class="tab-pane" id="pane-mcq">
+        <div class="generator-toolbar">
+          <div class="toolbar-left">
+            <div class="toolbar-group">
+              <label>Count:</label>
+              <select id="mcqCountSelect" class="select-box">
+                <option value="5">5 Questions</option>
+                <option value="10" selected>10 Questions</option>
+                <option value="20">20 Questions</option>
+                <option value="30">30 Questions</option>
+                <option value="50">50 Questions</option>
+              </select>
+            </div>
+            <div class="toolbar-group">
+              <label>Difficulty:</label>
+              <select id="mcqDifficultySelect" class="select-box">
+                <option value="">Balanced</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <div class="score-pill" id="quizScoreDisplay" style="display:none">
+              <span>Score:</span>
+              <strong id="quizScoreVal">0/0</strong>
+            </div>
+            <button id="quizModeToggle" class="ghost-btn sm" type="button" style="display:none" aria-pressed="false">Show all · Study mode</button>
+            <button id="generateMcqBtn" class="primary-btn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Generate Quiz
+            </button>
+          </div>
+        </div>
+
+        <div class="mcq-results-container" id="mcqResults">
+          <div class="empty-state">
+            <div class="empty-icon-wrap">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="m9 11 3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+            </div>
+            <h3>No Quiz Generated Yet</h3>
+            <p>Click <strong>Generate Quiz</strong> to create interactive multiple-choice questions with automated instant grading and explanations.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: FLASHCARDS -->
+      <section class="tab-pane" id="pane-flashcards">
+        <div class="generator-toolbar">
+          <div class="toolbar-left">
+            <div class="toolbar-group">
+              <label>Cards:</label>
+              <select id="flashcardCountSelect" class="select-box">
+                <option value="4">4 Cards</option>
+                <option value="6" selected>6 Cards</option>
+                <option value="10">10 Cards</option>
+              </select>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <button id="generateFlashcardsBtn" class="primary-btn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10M7 12h10M7 17h6"/></svg>
+              Generate Flashcards
+            </button>
+          </div>
+        </div>
+
+        <div class="flashcards-wrapper" id="flashcardsWrapper">
+          <div class="empty-state">
+            <div class="empty-icon-wrap">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect width="18" height="18" x="3" y="3" rx="2"/>
+                <path d="M7 7h10M7 12h10M7 17h6"/>
+              </svg>
+            </div>
+            <h3>No Flashcards Created</h3>
+            <p>Click <strong>Generate Flashcards</strong> to create active-recall revision cards with 3D flip animation.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: SUMMARY & NOTES -->
+      <section class="tab-pane" id="pane-summary">
+        <div class="generator-toolbar">
+          <div class="toolbar-left">
+            <span class="toolbar-caption">Synthesize executive summary, key takeaways, and a structured study plan</span>
+          </div>
+          <div class="toolbar-right">
+            <button id="generateSummaryBtn" class="primary-btn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+              Generate Summary & Study Guide
+            </button>
+          </div>
+        </div>
+        <div class="summary-results-container" id="summaryResults">
+          <div class="empty-state">
+            <div class="empty-icon-wrap">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <h3>No Summary Available</h3>
+            <p>Click <strong>Generate Summary</strong> to extract key takeaways, core terminology, and a prioritized learning roadmap.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+  <aside id="sourceDrawer" class="source-drawer" aria-hidden="true" aria-label="Source excerpt">
+    <div class="source-drawer-header">
+      <div>
+        <span class="eyebrow">Retrieved source</span>
+        <h3 id="sourceDrawerTitle">Source</h3>
+      </div>
+      <button id="closeSourceDrawerBtn" class="close-btn" type="button" aria-label="Close source excerpt">&times;</button>
+    </div>
+    <div class="source-relevance"><span>Retrieval relevance</span><strong id="sourceDrawerScore">0%</strong></div>
+    <div class="relevance-track"><span id="sourceDrawerBar"></span></div>
+    <blockquote id="sourceDrawerExcerpt"></blockquote>
+  </aside>
+
+  <div id="appToast" class="app-toast" role="status" aria-live="polite"></div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <h3>Settings & API Keys</h3>
+          <span class="modal-subtitle">Configure models, embeddings, and provider credentials</span>
+        </div>
+        <button id="closeSettingsBtn" class="close-btn" title="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Active LLM Provider:</label>
+          <select id="modalLlmProvider" class="select-box full">
+            <option value="gemini">Google Gemini (Free Tier)</option>
+            <option value="groq">Groq Cloud (Free Tier - Fast Llama 3)</option>
+            <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
+            <option value="claude">Anthropic Claude</option>
+            <option value="mock">Offline / Local Simulator</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="geminiKeyGroup">
+          <label>
+            Gemini API Key:
+            <a href="https://aistudio.google.com/" target="_blank" class="link">Get Free Key &rarr;</a>
+          </label>
+          <input type="password" id="modalGeminiKey" placeholder="AIzaSy..." class="text-input">
+        </div>
+
+        <div class="form-group" id="groqKeyGroup">
+          <label>
+            Groq API Key:
+            <a href="https://console.groq.com/" target="_blank" class="link">Get Free Key &rarr;</a>
+          </label>
+          <input type="password" id="modalGroqKey" placeholder="gsk_..." class="text-input">
+        </div>
+
+        <div class="form-group" id="openaiKeyGroup">
+          <label>
+            OpenAI API Key:
+            <a href="https://platform.openai.com/" target="_blank" class="link">Get OpenAI Key &rarr;</a>
+          </label>
+          <input type="password" id="modalOpenAiKey" placeholder="sk-..." class="text-input">
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-group">
+          <label>Vector Embedding Provider:</label>
+          <select id="modalEmbProvider" class="select-box full">
+            <option value="bert">BERT / Sentence-BERT (all-MiniLM-L6-v2, 384-d, Local)</option>
+            <option value="gemini">Gemini gemini-embedding-001 (3072-d, Free Cloud)</option>
+            <option value="openai">OpenAI text-embedding-3-small (1536-d)</option>
+            <option value="local">Local Offline Vector Fallback (384-d)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Concept Extraction / Salience Method:</label>
+          <select id="modalSalienceMethod" class="select-box full">
+            <option value="tfidf">TF-IDF (Statistical Term Frequency)</option>
+            <option value="textrank">TextRank (Graph-Based PageRank Centrality)</option>
+            <option value="embedding">Dense Embedding (KeyBERT Semantic Cosine)</option>
+          </select>
+        </div>
+
+        <div class="notification-box" id="modalNotification" style="display:none"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="saveSettingsBtn" class="primary-btn">Save & Apply Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Toast Overlay -->
+  <div class="toast-loading" id="toastLoading" style="display:none">
+    <div class="spinner"></div>
+    <span id="toastLoadingText">Processing...</span>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroLearn Assistant</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="header">
+      <div class="brand">
+        <span class="icon">&#9889;</span>
+        <strong>NeuroLearn</strong>
+      </div>
+      <a href="http://127.0.0.1:8000/" target="_blank" class="dashboard-link" title="Open Full Dashboard">Dashboard &nearr;</a>
+    </div>
+
+    <div class="active-page-info">
+      <div class="page-title" id="pageTitle">Detecting current page...</div>
+      <div class="page-url" id="pageUrl"></div>
+    </div>
+
+    <div class="action-buttons">
+      <button id="ingestPageBtn" class="action-btn primary">&#128196; Ingest Current Page</button>
+      <div class="quick-grid">
+        <button id="quickSummaryBtn" class="action-btn" disabled>&#128221; Summary</button>
+        <button id="quickQuizBtn" class="action-btn" disabled>&#9989; Quiz</button>
+        <button id="quickCardsBtn" class="action-btn" disabled>&#127183; Cards</button>
+      </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">Ready</div>
+
+    <div class="results-area" id="resultsArea" style="display:none">
+      <div class="results-content" id="resultsContent"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

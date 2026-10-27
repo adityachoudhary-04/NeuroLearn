@@ -1,0 +1,13 @@
+.env
+.venv/
+venv/
+__pycache__/
+**/__pycache__/
+.pytest_cache/
+.tmp/
+*.pyc
+data/chroma_db/
+data/test_chroma/
+data/uploads/*
+neurolearn_rag_project.zip
+.vscode/

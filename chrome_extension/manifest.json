@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "NeuroLearn - PDF & Web Learning Assistant",
+  "version": "1.0.0",
+  "description": "Extracts PDFs and webpages, generates RAG-grounded Q&A, MCQs, and flashcards.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "NeuroLearn Assistant"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
