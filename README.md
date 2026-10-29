@@ -117,6 +117,7 @@ minor proj/
 
 ```powershell
 .\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
 *(Or if using cmd: `venv\Scripts\activate.bat`)*
